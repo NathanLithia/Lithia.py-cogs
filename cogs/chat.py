@@ -1,0 +1,77 @@
+from discord.ext import commands
+import discord
+import random
+
+class Chat(commands.Cog):
+    def __init__(self, client):
+        self.client = client
+
+
+    @commands.command(pass_context=True, aliases=['say'])
+    async def Say(self, ctx, message: str = None):
+        """| Repeats text."""
+        await ctx.send(str(ctx.content).split('say', 1)[1])
+
+
+    @commands.command(pass_context=True, aliases=['yell', 'tts'])
+    async def TTS(self, ctx, message: str = None):
+        """| Repeats text as TTS."""
+        await ctx.send(str(ctx.content).split('tts', 1)[1], message, tts=True)
+
+
+    @commands.command(pass_context=True, aliases=['roll'])
+    async def Roll(self, ctx, dice : str):
+        """| Rolls a dice in NdN format."""
+        if len(dice) >= 100:
+            await ctx.send('Too much! try rolling less')
+            return
+        try:
+            rolls, limit = map(int, dice.split('d'))
+        except Exception:
+            await ctx.send('Format has to be in NdN!')
+            return
+        evaldata = ' + '.join(str(random.randint(1, limit)) for r in range(rolls))
+        total = eval(evaldata)
+        dicevalue = evaldata.replace(' + ', ',')
+        if len(dicevalue) >= 1000:
+            dicevalue = 'Dice data exceeds 1000 character limit for embed fields!'
+        rollembed=discord.Embed(title=f'{ctx.message.author.name} Rolled {dice}')
+        rollembed.set_thumbnail(url="https://emojipedia-us.s3.amazonaws.com/thumbs/120/emoji-one/104/game-die_1f3b2.png")
+        rollembed.add_field(name='DICE', value=f"({dicevalue})", inline=True)
+        rollembed.add_field(name='TOTAL', value=f'({total})', inline=True)
+        await ctx.send(f"{ctx.message.author.mention}", embed=rollembed)
+
+
+    @commands.command(description='For when you wanna settle the score some other way', aliases=['choose'])
+    async def Choose(self, ctx, *choices : str):
+        """| Chooses between multiple choices."""
+        await ctx.send(random.choice(choices))
+
+
+    @commands.command(pass_context=True, aliases=['invite'])
+    async def Invite(self, ctx, client_id = 309600524125339659):
+        """| Send invitation links"""
+        await ctx.send(f"Here's the invitation link.\n<https://discord.com/oauth2/authorize?client_id={client_id}&scope=bot>")
+
+
+    @commands.command(pass_context=True, aliases=['ping'])
+    async def Ping(self, ctx):
+        """| Pong!"""
+        await ctx.send(f"{ctx.message.author.mention} Pong!")
+
+
+    @commands.command(pass_context=True, hidden=True, aliases=['pong'])
+    async def Pong(self, ctx):
+        """| Ping!"""
+        await ctx.send(f"{ctx.message.author.mention} Ping!")
+
+
+    @commands.command(pass_context=True, hidden=True, aliases=['commands'])
+    async def command_redirect(self, ctx):
+        """| Redirect message for people listening to client status"""
+        await ctx.send(f"{ctx.message.author.mention} You can view my commands with >help")
+
+
+
+def setup(client):
+    client.add_cog(Chat(client))
