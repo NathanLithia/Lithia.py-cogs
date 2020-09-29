@@ -15,7 +15,7 @@ class Planetside(commands.Cog):
 
         #Default Variables
         self.PS2Images = ["https://cdn.discordapp.com/app-assets/309600524125339659/517514078227398677.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514073433309194.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514062985428993.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514065401217036.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514084455809034.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514083352969216.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514082136358916.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514072778866688.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514073055821825.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514077812293643.png"]
-        self.server_num = {'briggs':25, "jaeger":19, 'connery':1,'miller':10,'emerald':17,'colbalt':13,'soltech':40}
+        self.servernum = {'briggs':25, "jaeger":19, 'connery':1,'miller':10,'emerald':17,'colbalt':13,'soltech':40}
         self.servers = ['briggs', "jaeger", 'connery','miller','emerald','colbalt','soltech']
         self.ps2icon = "https://pbs.twimg.com/profile_images/883060220779532288/zViSqVuM_400x400.jpg"
         self.icons = {'nc':'<:NC:528718336180092938>','vs':'<:VS:528718387627687936>','tr':'<:TR:528718372192649237>','NS':'<:NS:740268320988725381>'}
@@ -106,23 +106,24 @@ class Planetside(commands.Cog):
         ps2embed=discord.Embed(color=embedcolor)
         ps2embed.set_author(name=f"Planetside 2", icon_url=self.ps2icon)
         ps2embed.set_thumbnail(url=f"{random.choice(self.PS2Images)}")
-        ps2embed.add_field(name=f'{ServerName.capitalize()}', value=f'``🔵`` ``{NC} : {NCPERC}%``\n``🟣`` ``{VS} : {VSPERC}%``\n``🔴`` ``{TR} : {TRPERC}%``', inline=True)
+        ps2embed.add_field(name=f'[{self.servernum[ServerName]}] {ServerName.capitalize()}', value=f'``🔵`` ``{NC} : {NCPERC}%``\n``🟣`` ``{VS} : {VSPERC}%``\n``🔴`` ``{TR} : {TRPERC}%``', inline=True)
         ps2embed.add_field(name='Statistics', value=f'``POP :`` ``{total}``\n``OP  :`` ``{OverPOP}``\n``WIN :`` ``WIP``', inline=True)
         ps2embed.set_footer(text=f"| PS2.FISU.PW RT-API | {datetime.datetime.utcnow()} |")
         return ps2embed
 
+
     @commands.command(pass_context=True, aliases=['briggs', 'Briggs', 'jaeger', 'Jaeger', 'connery', 'Connery', 'miller', 'Miller', 'emerald', 'Emerald', 'colbalt', 'Colbalt', 'soltech', 'Soltech'])
     async def Planetside(self, ctx):
-        """Get Stats from a Planetside Server, Commands {self.client.prefixes[0]+self.servers[0]}"""
+        f"""Get Stats from a Planetside Server, Commands {self.client.prefixes[0]+self.servers[0]}"""
         server = ctx.message.content.split()[0][1:].lower()
         if server in self.servers:
-            if eval(f"self.{server}Time == None") or eval(f'(datetime.datetime.now()-self.{server}Time).total_seconds() > self.NewCheckTime'):
-                exec(f'self.{server}Time = datetime.datetime.now()')
+            if getattr(self, f"{server}Time") == None or datetime.datetime.now()-getattr(self, f"{server}Time").total_seconds() > self.NewCheckTime:
+                setattr(self, f"{server}Time", datetime.datetime.now())
                 MSG = await ctx.send(f'{ctx.message.author.mention}', embed=self.PS2_Loading_Embed)
-                exec(f'self.{server}Data = self.PS2EmbedGen(self.PS2WorldGrab("1"), "{server}")')
-                await eval(f'MSG.edit(content="{ctx.message.author.mention}", embed=self.{server}Data)')
+                setattr(self, f"{server}Data", self.PS2EmbedGen(self.PS2WorldGrab(self.servernum[server]), server))
+                await MSG.edit(content=f"{ctx.message.author.mention}", embed=getattr(self, f"{server}Data"))
             else:
-                MSG = await eval(f'ctx.send("{ctx.message.author.mention} ``CACHED``", embed=self.{server}Data)')
+                MSG = await ctx.send(f"{ctx.message.author.mention} ``CACHED``", embed=getattr(self, f"{server}Data"))
 
 
 def setup(client):
