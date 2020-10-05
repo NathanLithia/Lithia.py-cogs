@@ -112,18 +112,20 @@ class Planetside(commands.Cog):
         return ps2embed
 
 
-    @commands.command(pass_context=True, aliases=['briggs', 'Briggs', 'jaeger', 'Jaeger', 'connery', 'Connery', 'miller', 'Miller', 'emerald', 'Emerald', 'colbalt', 'Colbalt', 'soltech', 'Soltech'])
+    @commands.command(pass_context=True, aliases=['jaeger', 'Jaeger', 'connery', 'Connery', 'miller', 'Miller', 'emerald', 'Emerald', 'colbalt', 'Colbalt', 'soltech', 'Soltech'])
     async def Planetside(self, ctx):
         f"""Get Stats from a Planetside Server, Commands {self.client.prefixes[0]+self.servers[0]}"""
         server = ctx.message.content.split()[0][1:].lower()
         if server in self.servers:
-            if getattr(self, f"{server}Time") == None or datetime.datetime.now()-getattr(self, f"{server}Time").total_seconds() > self.NewCheckTime:
-                setattr(self, f"{server}Time", datetime.datetime.now())
-                MSG = await ctx.send(f'{ctx.message.author.mention}', embed=self.PS2_Loading_Embed)
-                setattr(self, f"{server}Data", self.PS2EmbedGen(self.PS2WorldGrab(self.servernum[server]), server))
-                await MSG.edit(content=f"{ctx.message.author.mention}", embed=getattr(self, f"{server}Data"))
-            else:
-                MSG = await ctx.send(f"{ctx.message.author.mention} ``CACHED``", embed=getattr(self, f"{server}Data"))
+            try:
+                if getattr(self, f"{server}Time") == None or datetime.datetime.now().second-getattr(self, f"{server}Time").second > self.NewCheckTime:
+                    setattr(self, f"{server}Time", datetime.datetime.now())
+                    MSG = await ctx.send(f'{ctx.message.author.mention}', embed=self.PS2_Loading_Embed)
+                    setattr(self, f"{server}Data", self.PS2EmbedGen(self.PS2WorldGrab(self.servernum[server]), server))
+                    await MSG.edit(content=f"{ctx.message.author.mention}", embed=getattr(self, f"{server}Data"))
+                else:
+                    MSG = await ctx.send(f"{ctx.message.author.mention} ``CACHED``", embed=getattr(self, f"{server}Data"))
+            except Exception as e: await ctx.send(f'{e}')
 
 
 def setup(client):
