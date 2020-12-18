@@ -6,8 +6,9 @@ import aiohttp
 import urllib.request
 import datetime
 import asyncio
-import sqlite3 as sql
 import os
+import auraxium
+from auraxium import ps2
 
 class Planetside(commands.Cog):
     def __init__(self, client):
@@ -15,8 +16,8 @@ class Planetside(commands.Cog):
 
         #Default Variables
         self.PS2Images = ["https://cdn.discordapp.com/app-assets/309600524125339659/517514078227398677.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514073433309194.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514062985428993.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514065401217036.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514084455809034.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514083352969216.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514082136358916.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514072778866688.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514073055821825.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514077812293643.png"]
-        self.servernum = {'briggs':25, "jaeger":19, 'connery':1,'miller':10,'emerald':17,'colbalt':13,'soltech':40}
-        self.servers = ['briggs', "jaeger", 'connery','miller','emerald','colbalt','soltech']
+        self.servernum = {'briggs':25, "jaeger":19, 'connery':1,'miller':10,'emerald':17,'cobalt':13,'soltech':40}
+        self.servers = ['briggs', "jaeger", 'connery','miller','emerald','cobalt','soltech']
         self.ps2icon = "https://pbs.twimg.com/profile_images/883060220779532288/zViSqVuM_400x400.jpg"
         self.icons = {'nc':'<:NC:528718336180092938>','vs':'<:VS:528718387627687936>','tr':'<:TR:528718372192649237>','NS':'<:NS:740268320988725381>'}
         self.colors = {'nc':0x0080ff,'vs':0x740084,'tr':0xa40000}
@@ -29,6 +30,13 @@ class Planetside(commands.Cog):
         self.PS2_Loading_Embed.add_field(name=f'Loading...', value=f'``🔵`` ...\n``🟣`` ...\n``🔴`` ...', inline=True)
         self.PS2_Loading_Embed.add_field(name='Statistics', value=f'``POP :`` ...\n``OP  :`` ...\n``WIN :`` ...', inline=True)
         self.PS2_Loading_Embed.set_footer(text=f"| PS2.FISU.PW RT-API | {datetime.datetime.utcnow()} |")
+
+        self.BRIGGS_Embed=discord.Embed(color=0xc0c0c0)
+        self.BRIGGS_Embed.set_author(name="Planetside 2", icon_url=self.ps2icon)
+        self.BRIGGS_Embed.set_thumbnail(url=f"{random.choice(self.PS2Images)}")
+        self.BRIGGS_Embed.add_field(name=f'Briggs', value=f'``🔵`` ``0 : 0%``\n``🟣`` ``1 : 100%``\n``🔴`` ``0 : 0%``', inline=True)
+        self.BRIGGS_Embed.add_field(name='Statistics', value=f'``POP :`` Thanks\n``OP  :`` Diamond\n``WIN :`` Wing', inline=True)
+        self.BRIGGS_Embed.set_footer(text=f"| PS2.FISU.PW RT-API | {datetime.datetime.utcnow()} |")
 
         self.briggsTime   = None
         self.jaegerTime   = None
@@ -111,21 +119,78 @@ class Planetside(commands.Cog):
         ps2embed.set_footer(text=f"| PS2.FISU.PW RT-API | {datetime.datetime.utcnow()} |")
         return ps2embed
 
-
-    @commands.command(pass_context=True, aliases=['jaeger', 'Jaeger', 'connery', 'Connery', 'miller', 'Miller', 'emerald', 'Emerald', 'colbalt', 'Colbalt', 'soltech', 'Soltech'])
+    @commands.cooldown(1, 3, commands.BucketType.user)
+    @commands.command(pass_context=True, aliases=['jaeger', 'Jaeger', 'connery', 'Connery', 'miller', 'Miller', 'emerald', 'Emerald', 'cobalt', 'Cobalt', 'soltech', 'Soltech'])
     async def Planetside(self, ctx):
-        f"""Get Stats from a Planetside Server, Commands {self.client.prefixes[0]+self.servers[0]}"""
+        """
+        Checks the status of a Planetside2 Server.
+        Usage: {ServerName}
+        """
         server = ctx.message.content.split()[0][1:].lower()
         if server in self.servers:
             try:
-                if getattr(self, f"{server}Time") == None or datetime.datetime.now().second-getattr(self, f"{server}Time").second > self.NewCheckTime:
-                    setattr(self, f"{server}Time", datetime.datetime.now())
-                    MSG = await ctx.send(f'{ctx.message.author.mention}', embed=self.PS2_Loading_Embed)
-                    setattr(self, f"{server}Data", self.PS2EmbedGen(self.PS2WorldGrab(self.servernum[server]), server))
-                    await MSG.edit(content=f"{ctx.message.author.mention}", embed=getattr(self, f"{server}Data"))
-                else:
-                    MSG = await ctx.send(f"{ctx.message.author.mention} ``CACHED``", embed=getattr(self, f"{server}Data"))
+                #if getattr(self, f"{server}Time") == None: #or datetime.datetime.now().second-getattr(self, f"{server}Time").second > self.NewCheckTime:
+                #setattr(self, f"{server}Time", datetime.datetime.now())
+                MSG = await ctx.send(f'{ctx.message.author.mention}', embed=self.PS2_Loading_Embed)
+                setattr(self, f"{server}Data", self.PS2EmbedGen(self.PS2WorldGrab(self.servernum[server]), server))
+                await MSG.edit(content=f"{ctx.message.author.mention}", embed=getattr(self, f"{server}Data"))
+                #else:
+                #    MSG = await ctx.send(f"{ctx.message.author.mention} ``CACHED``", embed=getattr(self, f"{server}Data"))
             except Exception as e: await ctx.send(f'{e}')
+
+    @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.command(pass_context=True, aliases=['briggs'])
+    async def Briggs(self, ctx):
+        await ctx.send(f'{ctx.message.author.mention}', embed=self.BRIGGS_Embed)
+
+    @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.command(pass_context=True, aliases=['ceres', 'Ceres', 'genudine', 'Genudine'])
+    async def PS2Unsupported(self, ctx):
+        await ctx.send(f'{ctx.message.author.mention}, Planetside2 PS4 Servers are not supported.')
+
+    @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.command(pass_context=True)
+    async def Online(self, ctx, character):
+        """
+        Checks Status of a Planetside2 Character.
+        Usage: Online {Character}
+        """
+        if character == None: return
+        else:
+            async with auraxium.Client() as cli:
+                char = await cli.get_by_name(ps2.Character, f'{character}')
+
+                status = await char.is_online()
+                if status == True: status = "Online"
+                else: status = "Offline"
+
+                faction = await char.faction()
+                outfit = await char.outfit()
+                world = await char.world()
+                stat = await char.stat()
+            await ctx.send(f'``[{outfit}] {char.name()}``\nFaction = {faction}\nStatus = {status}\nWorld = {world}\n')
+            await ctx.send(f'stat {stat}')
+            asyncio.get_event_loop().run_until_complete(main())
+
+    @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.command(pass_context=True)
+    async def KD(self, ctx, character):
+        if character == None: return
+        else:
+            async with auraxium.Client() as cli:
+                char = await cli.get_by_name(ps2.leaderboard, f'{character}')
+
+                status = await char.is_online()
+                if status == True: status = "Online"
+                else: status = "Offline"
+
+                faction = await char.faction()
+                outfit = await char.outfit()
+                world = await char.world()
+                stat = await char.stat()
+            await ctx.send(f'``[{outfit}] {char.name()}``\nFaction = {faction}\nStatus = {status}\nWorld = {world}\n')
+            await ctx.send(f'stat {stat}')
+            asyncio.get_event_loop().run_until_complete(main())
 
 
 def setup(client):
