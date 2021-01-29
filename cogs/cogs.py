@@ -1,8 +1,8 @@
 from discord.ext import commands
 import discord
 
-class cogman(commands.Cog):
-    """Module management Commands for Lithia"""
+class Cogs(commands.Cog):
+    """Hidden Module management Commands for Lithia"""
     def __init__(self, client):
         self.client = client
         self.lastcog = None
@@ -61,4 +61,4 @@ class cogman(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(cogman(client))
+    client.add_cog(Cogs(client))

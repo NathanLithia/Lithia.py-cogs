@@ -5,7 +5,7 @@ import ast
 import subprocess
 
 class Sandpit(commands.Cog):
-    """Non Boxed "Sandbox" Module for Lithia"""
+    """Hidden Unboxed "Sandbox" Module for Lithia"""
     def __init__(self, client):
         self.client = client
 

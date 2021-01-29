@@ -5,8 +5,8 @@ import hashlib
 import ast
 
 
-class DevTools(commands.Cog):
-    """Development COG for Lithia"""
+class Tools(commands.Cog):
+    """Hidden Development COG for Lithia"""
     def __init__(self, client):
         self.client = client
 
@@ -110,4 +110,4 @@ class DevTools(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(DevTools(client))
+    client.add_cog(Tools(client))

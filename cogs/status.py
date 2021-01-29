@@ -2,7 +2,8 @@ from discord.ext import tasks, commands
 from itertools import cycle
 import asyncio, discord, sys
 
-class StatusCycle(commands.Cog):
+class Status(commands.Cog):
+    """Hidden Cog for cycling status displays for Lithia"""
     def __init__(self, client):
         self.client = client
         self.status = cycle([f'Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}', f'{self.client.prefixes[0]}Commands'])
@@ -23,4 +24,4 @@ class StatusCycle(commands.Cog):
         await self.client.wait_until_ready()
 
 def setup(client):
-    client.add_cog(StatusCycle(client))
+    client.add_cog(Status(client))

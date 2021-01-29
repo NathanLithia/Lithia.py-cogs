@@ -2,6 +2,7 @@ from discord.ext import commands
 import psutil
 
 class sensors(commands.Cog):
+    """Hidden Sensors Module for Lithia"""
     def __init__(self, client):
         self.client = client
 

@@ -3,7 +3,8 @@ import discord
 from datetime import datetime
 from time import time
 
-class info(commands.Cog):
+class Info(commands.Cog):
+    """Commands for pulling data and Displaying it."""
     def __init__(self, client):
         self.client = client
 
@@ -69,4 +70,4 @@ class info(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(info(client))
+    client.add_cog(Info(client))
