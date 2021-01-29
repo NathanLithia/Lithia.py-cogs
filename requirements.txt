@@ -1,0 +1,4 @@
+discord
+mcstatus
+auraxium
+psutil
