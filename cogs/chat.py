@@ -10,7 +10,7 @@ class Chat(commands.Cog):
     @commands.command(pass_context=True, aliases=['say'])
     async def Say(self, ctx, message: str = None):
         """| Repeats text."""
-        await ctx.send(str(ctx.content).split('say', 1)[1])
+        await ctx.reply(str(ctx.content).split('say', 1)[1])
 
 
     @commands.command(pass_context=True, aliases=['yell', 'tts'])
@@ -45,31 +45,31 @@ class Chat(commands.Cog):
     @commands.command(description='For when you wanna settle the score some other way', aliases=['choose'])
     async def Choose(self, ctx, *choices : str):
         """| Chooses between multiple choices."""
-        await ctx.send(random.choice(choices))
+        await ctx.reply(random.choice(choices))
 
 
     @commands.command(pass_context=True, aliases=['invite'])
     async def Invite(self, ctx, client_id = 309600524125339659):
         """| Send invitation links"""
-        await ctx.send(f"Here's the invitation link.\n<https://discord.com/oauth2/authorize?client_id={client_id}&scope=bot>")
+        await ctx.reply(f"Here's the invitation link.\n<https://discord.com/oauth2/authorize?client_id={client_id}&scope=bot>")
 
 
     @commands.command(pass_context=True, aliases=['ping'])
     async def Ping(self, ctx):
         """| Pong!"""
-        await ctx.send(f"{ctx.message.author.mention} Pong!")
+        await ctx.reply(f"{ctx.message.author.mention} Pong!")
 
 
     @commands.command(pass_context=True, hidden=True, aliases=['pong'])
     async def Pong(self, ctx):
         """| Ping!"""
-        await ctx.send(f"{ctx.message.author.mention} Ping!")
+        await ctx.reply(f"{ctx.message.author.mention} Ping!")
 
 
     @commands.command(pass_context=True, hidden=True, aliases=['commands'])
     async def command_redirect(self, ctx):
         """| Redirect message for people listening to client status"""
-        await ctx.send(f"{ctx.message.author.mention} You can view my commands with >help")
+        await ctx.reply(f"You can view my commands with >help")
 
 
 

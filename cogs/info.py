@@ -29,7 +29,7 @@ class Info(commands.Cog):
         userembed=discord.Embed(title=f'``{self.status_symbol(member.status)}`` ``{member.name}#{member.discriminator}`` ``{member.id}``')
         userembed.set_thumbnail(url=f"{member.avatar_url}")
         userembed.add_field(name='User Data', value=f"``Joined`` {member.joined_at}\n``Created`` {member.created_at}\n``Nick`` {member.nick}\n``Premium_since`` {member.premium_since}\n``Colour`` {member.colour}\n``Activity`` {member.activity}\n``top_role`` {member.top_role}\n``guild_permissions`` {member.guild_permissions}", inline=True)
-        await ctx.send(embed=userembed)
+        await ctx.reply(embed=userembed)
 
 
     @commands.command(pass_context=True, aliases=['pfp', 'upic'])
@@ -38,7 +38,7 @@ class Info(commands.Cog):
         if member is None: member = ctx.message.author
         pfpembed=discord.Embed(title=f'``{member.name}``')
         pfpembed.set_image(url=member.avatar_url)
-        await ctx.send(embed=pfpembed)
+        await ctx.reply(embed=pfpembed)
 
 
     @commands.command(pass_context=True, aliases=['spic'])
@@ -46,7 +46,7 @@ class Info(commands.Cog):
         """Prints server display image"""
         srvembed=discord.Embed(title=ctx.server.name)
         srvembed.set_image(url=ctx.server.icon_url)
-        await ctx.send(ctx.message.channel, embed=srvembed)
+        await ctx.reply(ctx.message.channel, embed=srvembed)
 
 
     @commands.command(pass_context=True, aliases=['sinfo'])
@@ -66,7 +66,7 @@ class Info(commands.Cog):
         srvembed=discord.Embed(title='Server Information')
         srvembed.set_thumbnail(url=ctx.message.server.icon_url)
         srvembed.add_field(name='SERVER STATS', value=stats, inline=True)
-        await ctx.send(ctx.message.channel, embed=srvembed)
+        await ctx.reply(ctx.message.channel, embed=srvembed)
 
 
 def setup(client):
