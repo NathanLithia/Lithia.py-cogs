@@ -122,10 +122,8 @@ class Planetside(commands.Cog):
         server = ctx.message.content.split()[0][1:].lower()
         if server in self.servers:
             try:
-                #if getattr(self, f"{server}Time") == None: #or datetime.datetime.now().second-getattr(self, f"{server}Time").second > self.NewCheckTime:
-                #setattr(self, f"{server}Time", datetime.datetime.now())
                 MSG = await ctx.reply('<https://github.com/NathanLithia/>', embed=self.PS2_Loading_Embed)
-                start_time = time.time()
+                #start_time = time.time()
                 setattr(self, f"{server}Data", self.PS2EmbedGen(self.PS2WorldGrab(self.servernum[server]), server))
                 await MSG.edit(content=f'<https://github.com/NathanLithia/>',embed=getattr(self, f"{server}Data"))
                 #else:
