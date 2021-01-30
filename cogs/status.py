@@ -6,7 +6,7 @@ class Status(commands.Cog):
     """Hidden Cog for cycling status displays for Lithia"""
     def __init__(self, client):
         self.client = client
-        self.status = cycle([f'Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}', f'{self.client.prefixes[0]}Commands'])
+        self.status = cycle([f'Python {sys.version_info.major}.{sys.version_info.minor}', f'{self.client.prefixes[0]}Commands'], 'NathanLithia.tk')
 
     @commands.Cog.listener()
     async def on_ready(self):
