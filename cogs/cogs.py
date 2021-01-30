@@ -16,9 +16,9 @@ class Cogs(commands.Cog):
             cog = f'cogs.{cog}'
         try:
             self.client.unload_extension(cog)
-            await ctx.send(f'`🔽Unloaded_Cog:` {cog}')
+            await ctx.reply(f'`🔽Unloaded_Cog:` {cog}')
         except Exception as e:
-            await ctx.send(f'`🔴{type(e).__name__}` - {e}')
+            await ctx.reply(f'`🔴{type(e).__name__}` - {e}')
 
 
     @commands.command(hidden=True, aliases=['reload', 'load'])
@@ -34,16 +34,16 @@ class Cogs(commands.Cog):
         try:
             self.client.unload_extension(cog)
             self.client.load_extension(cog)
-            return await ctx.send(f'`🔁Reloaded_Cog:` {cog}')  
+            return await ctx.reply(f'`🔁Reloaded_Cog:` {cog}')  
         except Exception as e:
             if type(e).__name__ == 'ExtensionNotLoaded':
                 try:
                     self.client.load_extension(cog)   
-                    return await ctx.send(f'`🔼Loaded_Cog:` {cog}')
+                    return await ctx.reply(f'`🔼Loaded_Cog:` {cog}')
                 except Exception as e:
-                    await ctx.send(f'`🔴{type(e).__name__}` - {e}')
+                    await ctx.reply(f'`🔴{type(e).__name__}` - {e}')
             else:
-                await ctx.send(f'`🔴{type(e).__name__}` - {e}')
+                await ctx.reply(f'`🔴{type(e).__name__}` - {e}')
 
 
     @commands.command(hidden=True, aliases=['enable', 'Enable'])

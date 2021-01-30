@@ -4,6 +4,7 @@ from mcstatus import MinecraftServer
 import json
 
 
+
 class Minecraft(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -11,7 +12,7 @@ class Minecraft(commands.Cog):
 
 
     @commands.command(pass_context=True)
-    async def minecraft(self, ctx, ip = 'emb.ovh:20001'):
+    async def minecraft(self, ctx, ip = 'emb.ovh:20001', modifier = None):
         """Retrieve Minecraft MOTD's"""
         try:
             response = json.loads(str(MinecraftServer.lookup(f"{ip}").query().raw).replace("\'", "\""))
@@ -20,8 +21,8 @@ class Minecraft(commands.Cog):
             mc.add_field(name='MOTD', value=f"``{response['hostname']}``", inline=False)
             mc.add_field(name='Statistics', value=f"Players: ``{response['numplayers']+'/'+response['maxplayers']}``\nMap: ``{response['map'].capitalize()}``", inline=True)
             mc.add_field(name='Address', value=f"IP: ``{response['hostip']}``\nPORT: ``{response['hostport']}``", inline=True)
-            mc.add_field(name='Software', value=f"```diff\n- {str(response['plugins']).replace('; ', self.newline+'+ ').replace(': ', ':'+self.newline+'+ ')}```", inline=False)
-            await ctx.send(embed=mc)
+            if modifier != None: mc.add_field(name='Software', value=f"```diff\n- {str(response['plugins']).replace('; ', self.newline+'+ ').replace(': ', ':'+self.newline+'+ ')}```", inline=False)
+            await ctx.reply(embed=mc)
         except Exception as e: await ctx.send(f'{e}')
 
 

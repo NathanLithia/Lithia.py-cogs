@@ -15,7 +15,7 @@ class Tools(commands.Cog):
     @commands.is_owner()
     async def reboot(self, ctx):
         """| Reboots the client."""
-        await ctx.send("```SubUnit\nRebooting <"+self.client.user.name+"> : "+str(datetime.datetime.now())+"z```")
+        await ctx.reply("```SubUnit\nRebooting <"+self.client.user.name+"> : "+str(datetime.datetime.now())+"z```")
         await self.client.close()
 
 
@@ -25,7 +25,7 @@ class Tools(commands.Cog):
         """| Creates an invite."""
         server_channel = self.client.get_channel(channel)
         invitelinknew = await self.client.create_invite(server_channel, xkcd = True, max_uses = 1)
-        await ctx.send(invitelinknew)
+        await ctx.reply(invitelinknew)
 
 
     @commands.command(hidden=True)
@@ -35,7 +35,7 @@ class Tools(commands.Cog):
         guild = self.client.get_guild(data)
         for channel in guild.channels:
             output = output+f"``{channel.id}`` ``{channel.name}``\n"
-        await ctx.send(output)
+        await ctx.reply(output)
 
 
     @commands.command(hidden=True)
@@ -52,7 +52,7 @@ class Tools(commands.Cog):
         output = ""
         for guild in self.client.guilds:
             output = output+f"``{guild.id}`` ``{guild.name}``\n"
-        await ctx.send(output)
+        await ctx.reply(output)
 
 
     @commands.command(hidden=True)

@@ -43,8 +43,8 @@ class Sandpit(commands.Cog):
             exec(compile(parsed, filename="<ast>", mode="exec"), env)
             result = (await eval(f"{fn_name}()", env))
         except Exception as e:
-            await ctx.send(f'`🔴{type(e).__name__}` - {e}')
-        await ctx.send(result)
+            await ctx.reply(f'`🔴{type(e).__name__}` - {e}')
+        await ctx.reply(result)
 
 
     @commands.command(hidden=True)
@@ -52,9 +52,9 @@ class Sandpit(commands.Cog):
     async def cmdOLD(self, ctx, *, inputs):
         """OLD Remote Terminal Access Tool"""
         result = subprocess.check_output(inputs.split())
-        await ctx.send(f'``{inputs.split()}``')
+        await ctx.reply(f'``{inputs.split()}``')
         trace = result.decode('utf-8')
-        for chunk in [trace[i:i+1500] for i in range(0, len(trace), 1500)]: await ctx.send(f"```{chunk}```")
+        for chunk in [trace[i:i+1500] for i in range(0, len(trace), 1500)]: await ctx.reply(f"```{chunk}```")
 
 
     @commands.command(hidden=True, aliases=['CMD', 'term', 'terminal'])
@@ -64,7 +64,7 @@ class Sandpit(commands.Cog):
         try:
             result = subprocess.check_output(inputs.split())
         except Exception as e:
-            await ctx.send(f'`🔴{type(e).__name__}` - {e}')
+            await ctx.reply(f'`🔴{type(e).__name__}` - {e}')
             return
         trace = result.decode('utf-8')
         self.Terminal_Embed=discord.Embed(color=0xc0c0c0)
@@ -75,7 +75,7 @@ class Sandpit(commands.Cog):
                 self.Terminal_Embed.add_field(name=f'Terminal Field: ``{fields}``', value=f'```{chunk}```')
                 fields += 1
             break
-        await ctx.send(embed=self.Terminal_Embed)
+        await ctx.reply(embed=self.Terminal_Embed)
 
 
 def setup(client):
