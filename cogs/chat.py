@@ -10,13 +10,9 @@ class Chat(commands.Cog):
     @commands.command(pass_context=True, aliases=['say'])
     async def Say(self, ctx, message: str = None):
         """| Repeats text."""
-        await ctx.reply(str(ctx.content).split('say', 1)[1])
-
-
-    @commands.command(pass_context=True, aliases=['yell', 'tts'])
-    async def TTS(self, ctx, message: str = None):
-        """| Repeats text as TTS."""
-        await ctx.send(str(ctx.content).split('tts', 1)[1], message, tts=True)
+        try:
+            await ctx.reply(str(ctx.message.content).split('say', 1)[1])
+        except Exception as e: await ctx.send(f'{e}')
 
 
     @commands.command(pass_context=True, aliases=['roll'])
