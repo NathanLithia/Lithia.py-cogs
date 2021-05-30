@@ -4,8 +4,8 @@ import datetime
 import ast
 import subprocess
 
-class Sandpit(commands.Cog):
-    """Hidden Unboxed "Sandbox" Module for Lithia"""
+class Developers(commands.Cog):
+    """Hidden Unboxed "Developers" Module for Lithia"""
     def __init__(self, client):
         self.client = client
 
@@ -44,7 +44,10 @@ class Sandpit(commands.Cog):
             result = (await eval(f"{fn_name}()", env))
         except Exception as e:
             await ctx.reply(f'`🔴{type(e).__name__}` - {e}')
-        await ctx.reply(result)
+        if result == None:
+            return
+        else:
+            await ctx.reply(result)
 
 
     @commands.command(hidden=True)
@@ -79,4 +82,4 @@ class Sandpit(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Sandpit(client))
+    client.add_cog(Developers(client))
