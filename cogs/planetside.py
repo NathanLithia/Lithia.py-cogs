@@ -22,8 +22,38 @@ class Planetside(commands.Cog):
         self.donation = "https://www.patreon.com/NathanLithia"
         self.EasterEggs = ["https://media.discordapp.net/attachments/723022911589580832/801699761933123634/Chimken_Sandwhich.gif", "https://media.discordapp.net/attachments/783545628964814848/800146289190895656/image0-42.gif", "https://media.discordapp.net/attachments/670519800400969749/818012605641261056/1596954736144.gif", "https://media.discordapp.net/attachments/814384891730198538/819929709973995610/giphy_-_2020-08-11T154220.479.gif", "https://media.discordapp.net/attachments/296056831514509312/791652552826814464/image0-448.gif", "https://media.discordapp.net/attachments/193278651020738561/779947007670222848/which.gif"]
         self.PS2Images = ["https://cdn.discordapp.com/app-assets/309600524125339659/517514078227398677.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514073433309194.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514062985428993.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514065401217036.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514084455809034.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514083352969216.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514082136358916.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514072778866688.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514073055821825.png","https://cdn.discordapp.com/app-assets/309600524125339659/517514077812293643.png"]
-        self.servernum = {'briggs':25, "jaeger":19, 'connery':1,'miller':10,'emerald':17,'cobalt':13,'soltech':40,'apex':24}
-        self.servers = ['briggs', "jaeger", 'connery','miller','emerald','cobalt','soltech','apex']
+
+        self.servernum = {
+            'briggs':25,
+            'jaeger':19,
+            'connery':1,
+            'miller':10,
+            'emerald':17,
+            'cobalt':13,
+            'soltech':40,
+            'apex':24,
+
+            25:'briggs',
+            19:'jaeger',
+            1:'connery',
+            10:'miller',
+            17:'emerald',
+            13:'cobalt',
+            40:'soltech',
+            24:'apex'
+            }
+
+        self.servers = [
+        'briggs',
+        'jaeger',
+        'connery',
+        'miller',
+        'emerald',
+        'cobalt',
+        'soltech',
+        'apex'
+        ]
+
         self.ps2icon = "https://pbs.twimg.com/profile_images/883060220779532288/zViSqVuM_400x400.jpg"
         self.icons = {'nc':'<:NC:528718336180092938>','vs':'<:VS:528718387627687936>','tr':'<:TR:528718372192649237>','NS':'<:NS:740268320988725381>'}
         self.colors = {'nc':0x0080ff,'vs':0x740084,'tr':0xa40000}
@@ -74,7 +104,7 @@ class Planetside(commands.Cog):
         NS = JData['result'][0]['ns']
 
         #Calculating population percentages.
-        total = NC+VS+TR
+        total = NC+VS+TR+NS
         if NC != 0: NCPERC = round(NC/total*100)
         else: NCPERC = NC
         if VS != 0: VSPERC = round(VS/total*100)
@@ -113,7 +143,7 @@ class Planetside(commands.Cog):
 
     @commands.cooldown(1, 3, commands.BucketType.user)
     @commands.command(pass_context=True, aliases=['jaeger', 'Jaeger', 'connery', 'Connery', 'miller', 'Miller', 'emerald', 'Emerald', 'cobalt', 'Cobalt', 'soltech', 'Soltech', 'apex', 'Apex'])
-    async def Planetside(self, ctx):
+    async def PS2(self, ctx):
         """
         Checks the status of a Planetside2 Server.
         Usage: {ServerName}
@@ -127,7 +157,45 @@ class Planetside(commands.Cog):
                 await MSG.edit(content=f'<{self.donation}>',embed=getattr(self, f"{server}Data"))
                 #else:
                 #    MSG = await ctx.send(f"{ctx.message.author.mention} ``CACHED``", embed=getattr(self, f"{server}Data"))
+            except Exception as e: await ctx.send(f'{e}\nFISU is probably down.')
+
+# https://ps2.fisu.pw/api/population/?world=19,1,10,17,13,40,24
+
+    def PS2ListEmbed(self, JData):
+        """Generates Embeds from supplied data"""
+        pass
+
+
+    @commands.cooldown(1, 3, commands.BucketType.user)
+    @commands.command(pass_context=True)
+    async def PS2Servers(self, ctx):
+        """
+        Checks the status of the Planetside2 Servers.
+        """
+        server = ctx.message.content.split()[0][1:].lower()
+        if server in self.servers:
+            try:
+                MSG = await ctx.reply(f'<{self.donation}>', embed=self.PS2_Loading_Embed)
+                #start_time = time.time()
+                setattr(self, f"{server}Data", self.PS2EmbedGen(self.PS2WorldGrab(self.servernum[server]), server))
+                await MSG.edit(content=f'<{self.donation}>',embed=getattr(self, f"{server}Data"))
+                #else:
+                #    MSG = await ctx.send(f"{ctx.message.author.mention} ``CACHED``", embed=getattr(self, f"{server}Data"))
             except Exception as e: await ctx.send(f'{e}')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     @commands.cooldown(1, 3, commands.BucketType.guild)
@@ -149,7 +217,7 @@ class Planetside(commands.Cog):
 
     #Experimental command.
     @commands.cooldown(1, 3, commands.BucketType.guild)
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, aliases=['online'])
     async def Online(self, ctx, character):
         """
         Checks Status of a Planetside2 Character.
@@ -171,29 +239,6 @@ class Planetside(commands.Cog):
             await ctx.send(f'``[{outfit}] {char.name()}``\nFaction = {faction}\nStatus = {status}\nWorld = {world}\n')
             await ctx.send(f'stat {stat}')
             asyncio.get_event_loop().run_until_complete(main())
-
-
-    #Experimental command.
-    @commands.cooldown(1, 3, commands.BucketType.guild)
-    @commands.command(pass_context=True)
-    async def KD(self, ctx, character):
-        if character == None: return
-        else:
-            async with auraxium.Client() as cli:
-                char = await cli.get_by_name(ps2.leaderboard, f'{character}')
-
-                status = await char.is_online()
-                if status == True: status = "Online"
-                else: status = "Offline"
-
-                faction = await char.faction()
-                outfit = await char.outfit()
-                world = await char.world()
-                stat = await char.stat()
-            await ctx.send(f'``[{outfit}] {char.name()}``\nFaction = {faction}\nStatus = {status}\nWorld = {world}\n')
-            await ctx.send(f'stat {stat}')
-            asyncio.get_event_loop().run_until_complete(main())
-
 
 def setup(client):
     client.add_cog(Planetside(client))
