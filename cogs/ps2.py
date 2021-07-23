@@ -118,7 +118,7 @@ class PS2(commands.Cog):
     async def psc(self, ctx, server):
         if server.lower() in self.servers:
             try:
-                await ctx.reply(embed=self.CreatePS2Embed(server))
+                await ctx.reply(embed=self.CreatePS2Embed(server.lower()))
             except Exception as e:
                 await ctx.reply(str(e))
 
